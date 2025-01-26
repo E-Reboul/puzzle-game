@@ -1,6 +1,6 @@
 export enum Shape {
     CIRCLE,
-    RECTANGLE,
+    SQUARE,
     DIAMOND,
     NONE
 }

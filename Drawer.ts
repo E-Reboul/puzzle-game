@@ -1,5 +1,3 @@
-import { Color } from "./Color.js";
-
 export class Drawer {
     private ctx: CanvasRenderingContext2D;
     private scale: number;
@@ -17,21 +15,21 @@ export class Drawer {
       this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     }
   
-    public drawRectangle(x: number, y: number, color: Color, size = 1):void {
+    public drawRectangle(x: number, y: number, color: string, size = 1):void {
       this.ctx.beginPath();
       this.ctx.fillStyle = color.toString();
       const width = size * this.scale;
       this.ctx.fillRect(x * this.scale + ((this.scale - width) / 2), y * this.scale + ((this.scale - width) / 2), width, width);
     }
   
-    public drawCircle(x: number, y: number, color: Color, size = 1):void {
+    public drawCircle(x: number, y: number, color: string, size = 1):void {
       this.ctx.beginPath();
       this.ctx.fillStyle = color.toString();
       this.ctx.arc(x * this.scale + this.scale / 2, y * this.scale + this.scale / 2, (size * this.scale) / 2, 0, 2 * Math.PI);
       this.ctx.fill();
     }
 
-    public drawDiamond(x: number, y: number, color: Color, size = 1): void {
+    public drawDiamond(x: number, y: number, color: string, size = 1): void {
       this.ctx.beginPath();
       this.ctx.fillStyle = color.toString();
       

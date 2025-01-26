@@ -1,19 +1,23 @@
-import { Color } from "./Color.js";
+import { Drawer } from "./Drawer.js";
 import { Shape } from "./Shape.js";
 
 export class Point {
-    protected x: number;
-    protected y: number;
-    protected shape: Shape;
-    protected color: Color;
-    protected z_index: number;
+    private x: number;
+    private y: number;
+    private color: string;
+    private shape: Shape;
+    private size: number;
+    private z_index: number;
 
-    constructor(x: number = 0, y: number = 0, shape: Shape = Shape.CIRCLE, color: Color = Color.NONE, z_index: number = 0) {
+    protected static z_index: number = 1;
+    
+    constructor(x: number, y: number, color: string = 'blue', shape: Shape = Shape.DIAMOND, size: number = 1, zIndex: number = Point.z_index) {
         this.x = x;
         this.y = y;
-        this.shape = shape;
         this.color = color;
-        this.z_index = z_index;
+        this.shape = shape;
+        this.size = size;
+        this.z_index = zIndex;
     }
 
     public getX(): number {
@@ -24,24 +28,53 @@ export class Point {
         return this.y;
     }
 
-    public setPos(x: number, y: number): void {
-        this.x = x;
-        this.y = y;
+    public getColor(): string {
+        return this.color;
     }
 
     public getShape(): Shape {
         return this.shape;
     }
 
-    public getColor(): Color {
-        return this.color;
+    public getSize(): number {
+        return this.size;
     }
 
     public getZIndex(): number {
         return this.z_index;
     }
 
-    public isOn(point: Point): boolean {
-        return point != this && point.getX() == this.getX() && point.getY() == this.getY();
+    public getPos(): {x:number,y:number}{
+        return {x:this.x,y:this.y};
+    }
+
+    public setX(x: number): void {
+        this.x = x;
+    }
+
+    public setColor(color: string): void {
+        this.color = color;
+    }
+    
+    public setY(y: number): void {
+        this.y = y;
+    }
+
+    public setZIndex(z_index: number): void {
+        this.z_index = z_index;
+    }
+ 
+    public setPos(x:number,y:number):void{
+        this.x = x;
+        this.y = y;
+      }
+
+    public isOn(p: Point): boolean{
+        if (p != this && this.x === p.getX() && this.y === p.getY()) return true;
+        return false;
+    }
+
+    public handle_draw(drawer: Drawer): void {
+        drawer.drawRectangle(this.x, this.y, this.color, this.size);
     }
 }

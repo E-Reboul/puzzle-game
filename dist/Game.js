@@ -1,88 +1,63 @@
-import { Color } from "./Color.js";
-import { Direction } from "./Direction.js";
 import { Display } from "./Display.js";
 import { Player } from "./Player.js";
-import { Trap } from "./Trap.js";
-import { Wall } from "./Wall.js";
+import { Point } from "./Point.js";
+function rand_int_in_range(min, max) {
+    return Math.round(Math.random() * (max - min) + min);
+}
 export class Game {
-    constructor(width, height, scale) {
-        this.display = new Display(width, height, scale);
-        this.width = width;
-        this.height = height;
-        this.player1 = new Player('Player one', width / 2, height / 2, Color.RED);
-        this.player2 = new Player('Player two', width / 2 + 1, height / 2, Color.BLUE);
-        this.objects = [];
-        this.level = 1;
+    display;
+    width;
+    height;
+    player;
+    player2;
+    objects;
+    isOver;
+    level;
+    constructor() {
+        this.display = new Display(800, 600, 1);
+        this.width = 800;
+        this.height = 600;
+        this.player = new Player(2, 0, 0, "jeanpierre", "blue");
+        this.player2 = new Player(3, this.width / 2, this.width / 2, "jeanpierreV2", "red");
+        this.objects = [this.player2];
         this.isOver = false;
+        this.level = 1;
     }
-    getLvl() {
-        return this.level;
+    initializeObjects() {
+        // Ajoutez des objets au jeu
+        this.objects.push(new Point(1, 1, "red"));
+        // Ajoutez d'autres objets si nécessaire
     }
     getObjects() {
         return this.objects;
     }
-    getObstacles(p) {
-        for (let obj of this.objects) {
-            if (obj.isOn(p) && !this.isWalkable(obj)) {
-                return obj;
-            }
-        }
-        return undefined;
+    getLvl() {
+        return this.level;
+    }
+    getEmptyPoint(padding = 0) {
+        let x_pos;
+        let y_pos;
+        let empty_point = new Point(0, 0);
+        do {
+            x_pos = rand_int_in_range(padding, this.width - 1);
+            y_pos = rand_int_in_range(padding, this.height - 1);
+            empty_point.setPos(x_pos, y_pos);
+        } while (this.getObstacle(empty_point));
+        return empty_point;
     }
     isWalkable(obj) {
-        if (obj instanceof Wall && !obj.can_walk_on())
+        if ("can_walk_on" in obj && !obj.can_walk_on())
             return false;
         return true;
     }
+    getObstacle(point) {
+        for (let obj of this.objects) {
+            if (obj.isOn(point) && !this.isWalkable(obj))
+                return obj;
+        }
+        return undefined;
+    }
     out_of_bounds(point) {
         return point.getX() < 0 || point.getX() >= this.width || point.getY() < 0 || point.getY() >= this.height;
-    }
-    handleEvent() {
-        document.addEventListener('keydown', (event) => {
-            switch (event.key) {
-                case 'Z':
-                    this.moveObject(this.player1, Direction.UP);
-                    break;
-                case 'S':
-                    this.moveObject(this.player1, Direction.DOWN);
-                    break;
-                case 'Q':
-                    this.moveObject(this.player1, Direction.LEFT);
-                    break;
-                case 'D':
-                    this.moveObject(this.player1, Direction.RIGHT);
-                    break;
-                default:
-                    break;
-            }
-        });
-    }
-    moveObject(obj, direction) {
-        if (!obj.can_move())
-            return false;
-        let new_pos = obj.nextPos(direction);
-        if (this.out_of_bounds(new_pos))
-            return false;
-        let obstacle = this.getObstacles(new_pos);
-        let doMove = false;
-        if (obstacle === undefined) {
-            doMove = true;
-        }
-        // else if (obstacle instanceof Movable) {
-        // }
-        if (doMove) {
-            obj.moveTo(new_pos);
-        }
-        else {
-            //update display
-        }
-        return doMove;
-    }
-    createLevel() {
-        this.objects.push(this.player1, this.player2);
-        this.objects.push(new Trap(5, 5));
-    }
-    update() {
-        this.display.draw(this);
     }
 }

@@ -1,118 +1,150 @@
-import { Color } from "./Color.js";
-import { Direction } from "./Direction.js";
+import { Direction } from "./Direction";
 import { Display } from "./Display.js";
-import { Movable } from "./Movable.js";
+import { Movable } from "./Movable";
 import { Player } from "./Player.js";
 import { Point } from "./Point.js";
-import { Trap } from "./Trap.js";
-import { Wall } from "./Wall.js";
+import { Walkable } from "./Walkable.js";
+
+
+function rand_int_in_range(min:number,max:number):number{
+    return Math.round(Math.random()*(max-min)+min);
+}
 
 export class Game {
     
     protected display: Display;
     protected width: number;
     protected height: number;
-
-    protected level: number;
-    protected player1: Player;
+    protected player: Player;
     protected player2: Player;
     protected objects: Point[];
     protected isOver: boolean;
-
-    constructor(width: number, height: number, scale: number){
-        this.display = new Display(width, height, scale);
-        this.width = width;
-        this.height = height;
-
-        this.player1 = new Player('Player one', width / 2, height / 2, Color.RED);
-        this.player2 = new Player('Player two', width / 2 + 1, height / 2, Color.BLUE);
-        
-        this.objects = [];
-
-        this.level = 1;
+    protected level: number;
+    
+    constructor() {
+        this.display = new Display(800, 600, 1);
+        this.width = 800;
+        this.height = 600;
+        this.player = new Player(2, 0, 0, "jeanpierre", "blue");
+        this.player2 = new Player(3, this.width / 2, this.width / 2, "jeanpierreV2", "red");
+        this.objects = [new Player(1, 0, 0, "jeanpierre", "green")];
         this.isOver = false;
+        this.level = 1;
     }
 
-    public getLvl(): number {
-        return this.level;
+    private initializeObjects(): void {
+        // Ajoutez des objets au jeu
+        this.objects.push(new Point(1, 1, "red"));
+        // Ajoutez d'autres objets si nécessaire
     }
-
-    public getObjects(): Point[] {
+    
+    public getObjects():Point[]{
         return this.objects;
     }
 
-    public getObstacles(p: Point): Point|undefined {
-        for (let obj of this.objects) {
-            if(obj.isOn(p) && !this.isWalkable(obj)) {
-                return obj;
-            }
-        }
-
-        return undefined;
+    public getLvl():number{
+        return this.level;
     }
 
-    public isWalkable(obj: Point): boolean {
-        if (obj instanceof Wall && !obj.can_walk_on() ) return false;
+    protected isWalkable(obj:Point):boolean{
+        if( "can_walk_on" in obj && !(obj as unknown as Walkable).can_walk_on()) return false;
         return true;
+    }
+
+    public getObstacle(point:Point):Point|undefined{
+        for(let obj of this.objects){
+            if(obj.isOn(point) && !this.isWalkable(obj)) return obj;
+        }
+        return undefined;
     }
 
     public out_of_bounds(point:Point):boolean{
         return point.getX()<0 || point.getX()>=this.width || point.getY()<0 || point.getY()>=this.height;
     }
 
-    public handleEvent(): void {
-        document.addEventListener('keydown', (event) => {
-            switch(event.key) {
-                case 'Z':
-                    this.moveObject(this.player1, Direction.UP);
-                    break;
-                case 'S':
-                    this.moveObject(this.player1, Direction.DOWN);
-                    break;
-                case 'Q':
-                    this.moveObject(this.player1, Direction.LEFT);
-                    break;
-                case 'D':
-                    this.moveObject(this.player1, Direction.RIGHT);
-                    break;
-                default:
-                    break;
-            }
-        })
-    }
+    // protected updateDisplay():void{
+    //     this.display.draw(this);
+    // }
 
-    public moveObject(obj: Movable, direction: Direction): boolean {
-        if (!obj.can_move()) return false;
+    // public run():void{
+    //     this.createLevel();
+    //     this.handleEvent();
+    // }
 
-        let new_pos = obj.nextPos(direction);
+    // protected handleEvent():void {
+    //     document.addEventListener('keydown', (event) => {
+    //       if (!this.isOver) {
+    //         switch (event.key) {
+    //           case "ArrowLeft":
+    //             this.moveObject(this.player, Direction.LEFT);
+    //             break;
+    //           case "ArrowRight":
+    //             this.moveObject(this.player, Direction.RIGHT);
+    //             break;
+    //           case "ArrowUp":
+    //             this.moveObject(this.player, Direction.UP);
+    //             break;
+    //           case "ArrowDown":
+    //             this.moveObject(this.player, Direction.DOWN);
+    //             break;
+    //         }
+    //       }
+    //     })
+    //   }
 
-        if (this.out_of_bounds(new_pos)) return false;
+    // public moveObject(obj:Movable,dir:Direction):boolean{
 
-        let obstacle = this.getObstacles(new_pos);
+    //     if(!obj.can_move()) return false;
 
-        let doMove: boolean = false;
+    //     let nextPos : Point = obj.nextPos(dir);
 
-        if (obstacle === undefined) {
-            doMove = true;
-        }
+    //     if(this.out_of_bounds(nextPos)) return false;
 
-        // else if (obstacle instanceof Movable) {
-            
-        // }
-        if (doMove) {
-            obj.moveTo(new_pos);
-        } else {
-            //update display
-        }
-        return doMove;
-    }
+    //     let obstacle : Point|undefined = this.getObstacle(nextPos);
 
-    public createLevel(): void {
-        this.objects.push(this.player1, this.player2);
-        this.objects.push(new Trap(5, 5));
-    }
+    //     let doMove:boolean = false;
+    
+    //     if(obstacle == undefined){
+    //         doMove = true;
+    //     }
 
-    public update(): void {
-        this.display.draw(this);
-    }
+    //     else if (obstacle instanceof Movable){ // Allow any Movable to move Objects (pile of rocks)
+    //         doMove = this.moveObject(obstacle, dir); 
+    //     }
+
+    //     if(doMove){
+    //         obj.moveTo(nextPos);
+    //         if(this.hasWon()){
+    //             this.level++;
+    //             this.createLevel();
+    //         }
+    //         else{
+    //             this.updateDisplay();
+    //         }
+    //     }
+
+    //     return doMove;
+    // }
+
+    // protected hasWon():boolean{
+
+    //     for(let obj of this.objects){
+    //         if(obj instanceof Hole && !obj.can_walk_on()) return false;
+    //     }
+
+    //     return true;
+    // }
+    // public createLevel():void{
+    //     this.player = new Player(this.width/2,this.height/2);
+    //     this.objects = [this.player];
+
+    //     for(let i = 0; i<this.level; i++ ){
+    //         let empty_point : Point = this.getEmptyPoint();
+    //         this.objects.push(new Hole(empty_point.getX(),empty_point.getY()));
+    //         empty_point = this.getEmptyPoint();
+    //         this.objects.push(new Rock(empty_point.getX(),empty_point.getY()));
+    //     } 
+
+    //     this.updateDisplay();
+    // }
 }

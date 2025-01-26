@@ -11,25 +11,23 @@ export class Display {
         this.drawer = new Drawer(width, height, scale);
     }
 
-    public draw_objects(obj: Point, curr_z_index: number): boolean {
-        if(obj.getZIndex() != curr_z_index) return false;
+    public draw_objects(obj:Point,curr_z_index:number):boolean{
+        if(obj.getZIndex()!=curr_z_index) return false;
 
-        switch(obj.getShape()) {
+        switch(obj.getShape()){
             case Shape.CIRCLE:
-                this.drawer.drawCircle(obj.getX(), obj.getY(), obj.getColor());
+                this.drawer.drawCircle(obj.getX(),obj.getY(),obj.getColor(), obj.getSize());
                 break;
-            case Shape.RECTANGLE:
-                this.drawer.drawRectangle(obj.getX(), obj.getY(), obj.getColor());
+            case Shape.SQUARE:
+                this.drawer.drawRectangle(obj.getX(),obj.getY(),obj.getColor(), obj.getSize());
                 break;
             case Shape.DIAMOND:
-                this.drawer.drawDiamond(obj.getX(), obj.getY(), obj.getColor());
-            default:
-                break;
+                this.drawer.drawDiamond(obj.getX(),obj.getY(),obj.getColor(), obj.getSize());
         }
 
         return true;
     }
-
+    
     public draw(game: Game): void {
         this.drawer.clear();
     

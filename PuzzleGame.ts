@@ -1,7 +1,7 @@
 import { Display } from "./Display.js";
 import { Game } from "./Game.js";
 
-const display: Display = new Display(50, 50, 10);
-const game: Game = new Game(50, 50, 10);
+let display: Display = new Display(10, 10, 1);
+let game: Game = new Game();
 
-game.update();
+display.draw(game);

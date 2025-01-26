@@ -1,21 +1,18 @@
-import { Color } from "./Color.js";
+import { Drawer } from "./Drawer.js";
 import { Point } from "./Point.js";
-import { Shape } from "./Shape.js";
-import { Walkable } from "./Walkable.js";
 
-export class Wall extends Point implements Walkable {
+export class Wall extends Point {
 
-    protected static WALL_Z: number = 2;
+    protected static color: string = "black";
+    protected static border_color: string = "gray";
+    protected static z_index: number = 2;
 
-    constructor(x: number, y: number, shape: Shape = Shape.RECTANGLE, color: Color = Color.GRAY, z_index: number = Wall.WALL_Z) {
-        super(x, y, shape, color, z_index);
+    constructor(x: number, y: number) {
+        super(x, y, Wall.color, Wall.z_index);
     }
 
-    public can_walk_on(): boolean {
-        return false;
+    public override handle_draw(drawer: Drawer): void {
+        drawer.drawRectangle(this.getX(), this.getY(), this.getColor(), 1);
+        drawer.drawRectangle(this.getX(), this.getY(), Wall.border_color, 0.8);
     }
-
-    public enableWalk() {}
-
-    public disableWalk(){}
 }

@@ -1,4 +1,3 @@
-import { Color } from "./Color.js";
 import { Direction } from "./Direction.js";
 import { Point } from "./Point.js";
 import { Shape } from "./Shape.js";
@@ -7,8 +6,8 @@ export class Movable extends Point {
 
     protected _can_move: boolean;
 
-    constructor(x: number = 0, y: number = 0, shape: Shape = Shape.CIRCLE, color: Color = Color.NONE, z_index = 0) {
-        super(x, y, shape, color, z_index);
+    constructor(x: number = 0, y: number = 0, color: string = "brown", shape: Shape, size: number = 1, z_index: number) {
+        super(x, y, color, shape, size, z_index);
         this._can_move = true;
     }
 
@@ -18,14 +17,14 @@ export class Movable extends Point {
 
     public nextPos(dir: Direction): Point {
         return new Point(
-            this.x + Number(dir == Direction.RIGHT) - Number(dir == Direction.LEFT),
-            this.y + Number(dir == Direction.DOWN) - Number(dir == Direction.UP)
+            this.getX() + Number(dir == Direction.RIGHT) - Number(dir == Direction.LEFT),
+            this.getY() + Number(dir == Direction.DOWN) - Number(dir == Direction.UP)
         )   
     }
 
     public moveTo(target:Point):void{
         if(!this._can_move) return;
-        this.x = target.getX();
-        this.y = target.getY();
+        this.setX(target.getX());
+        this.setY(target.getY());
     }
 }

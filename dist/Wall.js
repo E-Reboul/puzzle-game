@@ -1,14 +1,13 @@
-import { Color } from "./Color.js";
 import { Point } from "./Point.js";
-import { Shape } from "./Shape.js";
 export class Wall extends Point {
-    constructor(x, y, shape = Shape.RECTANGLE, color = Color.GRAY, z_index = Wall.WALL_Z) {
-        super(x, y, shape, color, z_index);
+    static color = "black";
+    static border_color = "gray";
+    static z_index = 2;
+    constructor(x, y) {
+        super(x, y, Wall.color, Wall.z_index);
     }
-    can_walk_on() {
-        return false;
+    handle_draw(drawer) {
+        drawer.drawRectangle(this.getX(), this.getY(), this.getColor(), 1);
+        drawer.drawRectangle(this.getX(), this.getY(), Wall.border_color, 0.8);
     }
-    enableWalk() { }
-    disableWalk() { }
 }
-Wall.WALL_Z = 2;

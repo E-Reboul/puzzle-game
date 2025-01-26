@@ -1,4 +1,6 @@
 export class Drawer {
+    ctx;
+    scale;
     constructor(width, height, scale = 10) {
         this.scale = scale;
         const canvas = document.createElement('canvas');
